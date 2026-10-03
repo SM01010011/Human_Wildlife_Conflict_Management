@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F6F8F5">
+<title>HWCM Monitor — ML-based Early Warning & Decision Support System (Demo)</title>
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="%232F5D3A"/><text x="50" y="70" font-size="54" text-anchor="middle">🐘</text></svg>'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to dashboard content</a>
+
+<!-- First-load splash -->
+<div class="splash" id="splash" role="status" aria-label="Loading HWCM Monitor prototype">
+  <div class="splash-inner">
+    <div class="mark" aria-hidden="true">🐘</div>
+    <h2>HWCM Monitor</h2>
+    <p class="s-name">Machine Learning-based Early Warning &amp; Decision Support System<br>for Human-Wildlife Conflict Management in India</p>
+    <p class="s-sub">Academic prototype · CHE110 · synthetic demo data only — not an operational system</p>
+    <div class="bar" aria-hidden="true"><i></i></div>
+  </div>
+</div>
+
+<div class="app">
+  <nav class="rail" id="rail" aria-label="Dashboard sections">
+    <div class="brand-wrap">
+      <div class="brand"><span class="mark" aria-hidden="true">🐘</span>HWCM <span>Monitor</span></div>
+      <div class="brand-full">Human-Wildlife Conflict Management</div>
+      <div class="rail-demo">Prototype · demo data only — not an operational system</div>
+    </div>
+    <div class="rail-label">Monitor</div>
+    <button type="button" class="nav-item active" data-panel="overview" aria-current="page"><span class="ic" aria-hidden="true">◆</span>Overview</button>
+    <button type="button" class="nav-item" data-panel="map"><span class="ic" aria-hidden="true">◈</span>Live Map</button>
+    <button type="button" class="nav-item" data-panel="alerts"><span class="ic" aria-hidden="true">▲</span>Risk Alerts</button>
+    <button type="button" class="nav-item" data-panel="hotspots"><span class="ic" aria-hidden="true">●</span>Hotspots</button>
+    <button type="button" class="nav-item" data-panel="assess"><span class="ic" aria-hidden="true">⚖</span>Risk Assessment</button>
+    <div class="rail-label">System</div>
+    <button type="button" class="nav-item" data-panel="reports"><span class="ic" aria-hidden="true">▤</span>Reports</button>
+    <button type="button" class="nav-item" data-panel="settings"><span class="ic" aria-hidden="true">⚙</span>Settings</button>
+    <div class="sys-status">
+      <div class="sh"><i aria-hidden="true"></i>All sensors online</div>
+      <div class="sr"><span>GPS collars</span><b>24/24</b></div>
+      <div class="sr"><span>Camera traps</span><b>41/42</b></div>
+      <div class="sr"><span>Last sync</span><b id="last-sync">just now</b></div>
+    </div>
+  </nav>
+
+  <main id="main" tabindex="-1">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button type="button" class="icon-btn nav-toggle" id="nav-toggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="rail">
+          <span class="nt-bars" aria-hidden="true"></span>
+        </button>
+        <div>
+          <div class="dept">MADHYA PRADESH FOREST DEPT. · BUFFER ZONE 4</div>
+          <h1 id="panel-title">Early Warning & Decision Support</h1>
+          <p id="panel-sub">Simulated live feed · Panna–Bandhavgarh forest corridor, India</p>
+        </div>
+      </div>
+      <div class="top-right">
+        <button type="button" class="btn-ghost btn-sm" id="simulate-btn">⚡ Simulate alert</button>
+        <div class="demo-chip"><span class="pulse" aria-hidden="true"></span>DEMO · SYNTHETIC DATA</div>
+        <div class="clock"><b id="clock-time"></b><span id="clock-date"></span></div>
+      </div>
+    </div>
+
+    <!-- OVERVIEW -->
+    <section class="panel active" id="p-overview">
+      <div class="stats">
+        <button type="button" class="stat" data-goto="map" aria-label="Animals tracked — open the Live Map">
+          <span class="stat-top"><span class="stat-ic" aria-hidden="true">◈</span><span class="stat-delta">24 GPS collared</span></span>
+          <span class="n" id="s-total" data-count="128">0</span><span class="l">Animals tracked</span>
+        </button>
+        <button type="button" class="stat high" data-goto="high" aria-label="High-risk alerts — open Risk Alerts filtered to high">
+          <span class="stat-top"><span class="stat-ic" aria-hidden="true">▲</span><span class="stat-delta">needs review</span></span>
+          <span class="n" id="s-high" data-count="4">0</span><span class="l">High-risk alerts today</span>
+        </button>
+        <button type="button" class="stat mod" data-goto="mod" aria-label="Moderate-risk alerts — open Risk Alerts filtered to moderate">
+          <span class="stat-top"><span class="stat-ic" aria-hidden="true">●</span><span class="stat-delta">monitoring</span></span>
+          <span class="n" id="s-mod" data-count="5">0</span><span class="l">Moderate-risk alerts</span>
+        </button>
+        <button type="button" class="stat low" data-goto="low" aria-label="Low-risk alerts — open Risk Alerts filtered to low">
+          <span class="stat-top"><span class="stat-ic" aria-hidden="true">✓</span><span class="stat-delta">routine</span></span>
+          <span class="n" id="s-low" data-count="5">0</span><span class="l">Low-risk alerts</span>
+        </button>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="card-head"><h3>Risk level summary</h3><small>current alert log</small></div>
+          <div class="donut-wrap">
+            <div id="chart-donut" aria-hidden="true"></div>
+            <div class="legend">
+              <div data-seg="0"><span class="dot" style="background:var(--high)"></span>High risk <b id="leg-high">–</b></div>
+              <div data-seg="1"><span class="dot" style="background:var(--mod)"></span>Moderate risk <b id="leg-mod">–</b></div>
+              <div data-seg="2"><span class="dot" style="background:var(--low)"></span>Low risk <b id="leg-low">–</b></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>Conflict risk trend</h3><small>alerts / day · demo data</small></div>
+          <div class="chart-wrap" id="chart-trend-wrap">
+            <div id="chart-trend"></div>
+            <div class="chart-tip" id="chart-tip" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="card-head"><h3>Live animal locations</h3><small>preview · tap a marker to inspect</small></div>
+          <div class="map" id="map-preview" role="img" aria-label="Simulated map of the monitored forest corridor showing tracked animal locations"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Latest alerts</h3><small>preview · click to inspect</small></div>
+          <div class="alerts" id="alerts-preview"></div>
+        </div>
+      </div>
+      <p class="note">Academic prototype for CHE110 · all data shown is synthetic and illustrative only.</p>
+    </section>
+
+    <!-- LIVE MAP -->
+    <section class="panel" id="p-map">
+      <div class="card">
+        <div class="filters" role="group" aria-label="Filter map by species and risk">
+          <span class="filter-label">Species</span>
+          <button type="button" class="fbtn on" data-mf="all">All species</button>
+          <button type="button" class="fbtn" data-mf="elephant">Elephant</button>
+          <button type="button" class="fbtn" data-mf="leopard">Leopard</button>
+          <button type="button" class="fbtn" data-mf="boar">Wild boar</button>
+          <button type="button" class="fbtn" data-mf="tiger">Tiger</button>
+          <span class="filter-spacer"></span>
+          <span class="filter-label">Risk</span>
+          <button type="button" class="fbtn on" data-rf="all">All risk</button>
+          <button type="button" class="fbtn" data-rf="high">High</button>
+          <button type="button" class="fbtn" data-rf="mod">Moderate</button>
+          <button type="button" class="fbtn" data-rf="low">Low</button>
+        </div>
+        <div class="filters" role="group" aria-label="Map layers and simulation controls">
+          <button type="button" class="fbtn" id="active-only" aria-pressed="false">◉ Active alerts only</button>
+          <span class="filter-spacer"></span>
+          <span class="filter-label">Layers</span>
+          <button type="button" class="fbtn lbtn on" data-layer="forest" aria-pressed="true">Forest</button>
+          <button type="button" class="fbtn lbtn on" data-layer="farm" aria-pressed="true">Farmland</button>
+          <button type="button" class="fbtn lbtn on" data-layer="villages" aria-pressed="true">Villages</button>
+          <button type="button" class="fbtn lbtn on" data-layer="roads" aria-pressed="true">Roads</button>
+          <button type="button" class="fbtn lbtn on" data-layer="river" aria-pressed="true">River</button>
+          <button type="button" class="fbtn lbtn on" data-layer="boundary" aria-pressed="true">Boundary</button>
+          <button type="button" class="fbtn lbtn on" data-layer="zone" aria-pressed="true">Zone</button>
+          <span class="filter-spacer"></span>
+          <button type="button" class="btn-ghost btn-sm" id="sim-toggle" aria-pressed="false">⏸ Pause movement</button>
+        </div>
+        <div class="map map-lg" id="map-full" role="img" aria-label="Simulated live map of the monitored forest corridor showing GPS-collared animals. Click a marker for the animal panel."></div>
+        <div class="legend legend-row">
+          <div><span class="dot" style="background:var(--high)"></span>High risk — pulsing marker</div>
+          <div><span class="dot" style="background:var(--mod)"></span>Moderate risk</div>
+          <div><span class="dot" style="background:var(--low)"></span>Low risk</div>
+          <div><span class="dot" style="background:var(--primary)"></span>Monitoring zone</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ALERTS -->
+    <section class="panel" id="p-alerts">
+      <div class="card">
+        <div class="filters" id="alert-filters" role="group" aria-label="Filter alerts by severity">
+          <button type="button" class="fbtn on" data-f="all">All</button>
+          <button type="button" class="fbtn" data-f="high">High</button>
+          <button type="button" class="fbtn" data-f="mod">Moderate</button>
+          <button type="button" class="fbtn" data-f="low">Low</button>
+          <span class="filter-spacer"></span>
+          <label class="search-wrap"><span class="sr-only">Search alerts by species, location or ID</span>
+            <input type="search" id="alert-search" class="text-input" placeholder="Search species, location, ID…">
+          </label>
+        </div>
+        <div class="filters" id="species-filters" role="group" aria-label="Filter alerts by species and zone">
+          <span class="filter-label">Species</span>
+          <button type="button" class="fbtn on" data-sf="all">All</button>
+          <button type="button" class="fbtn" data-sf="elephant">Elephant</button>
+          <button type="button" class="fbtn" data-sf="leopard">Leopard</button>
+          <button type="button" class="fbtn" data-sf="boar">Wild boar</button>
+          <button type="button" class="fbtn" data-sf="tiger">Tiger</button>
+          <span class="filter-spacer"></span>
+          <label><span class="sr-only">Filter by zone</span>
+            <select id="zone-select" class="select"><option value="all">All zones</option></select>
+          </label>
+          <span class="alerts-meta" id="alerts-meta"></span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <caption class="sr-only">Risk alert log with species, location, distance, time, severity and details. Click a column header to sort.</caption>
+            <thead><tr>
+              <th scope="col">Species</th>
+              <th scope="col">Location</th>
+              <th scope="col" aria-sort="descending"><button type="button" class="sort-btn sorted" data-sort="time">Time <span class="sort-ind" aria-hidden="true">▼</span></button></th>
+              <th scope="col"><button type="button" class="sort-btn" data-sort="dist">Distance <span class="sort-ind" aria-hidden="true">↕</span></button></th>
+              <th scope="col"><button type="button" class="sort-btn" data-sort="risk">Risk <span class="sort-ind" aria-hidden="true">↕</span></button></th>
+              <th scope="col">Status</th>
+              <th scope="col"><span class="sr-only">Details</span></th>
+            </tr></thead>
+            <tbody id="alert-table"></tbody>
+          </table>
+        </div>
+        <div class="empty" id="alerts-empty" hidden aria-live="polite">
+          <div class="empty-ic" aria-hidden="true">◎</div>
+          <div class="empty-t">No alerts match these filters</div>
+          <div class="empty-s">Try a different severity, species, zone or search term — or clear all filters.</div>
+          <button type="button" class="btn-ghost" id="clear-alert-filter">Show all alerts</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOTSPOTS -->
+    <section class="panel" id="p-hotspots">
+      <div class="card">
+        <div class="card-head"><h3>Conflict hotspots</h3><small id="hotspot-mode">auto-recalculated from the live demo alert log</small></div>
+        <div id="hotspot-list"></div>
+      </div>
+    </section>
+
+    <!-- RISK ASSESSMENT -->
+    <section class="panel" id="p-assess">
+      <div class="grid2 assess-grid">
+        <div class="card">
+          <div class="card-head"><h3>Scenario inputs</h3><small>Demonstration Decision-Support Model</small></div>
+          <div class="assess-form" id="assess-form">
+            <label class="assess-field assess-prefill"><span>Prefill from tracked animal <em class="w">demo</em></span>
+              <select id="in-prefill" class="select"><option value="">— Select a GPS-collared animal —</option></select>
+            </label>
+          </div>
+          <p class="assess-hint">Each factor carries a visible weight (w). The demo score is the weighted sum — no hidden model, no training data.</p>
+          <div class="assess-actions">
+            <button type="button" class="btn-ghost" id="assess-save">Save to history</button>
+            <button type="button" class="btn-ghost" id="assess-download">Download assessment (.txt)</button>
+          </div>
+          <div class="rep-sec">Saved assessments</div>
+          <div id="assess-history"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Risk assessment</h3><small>prototype risk scoring · recalculated live</small></div>
+          <div id="assess-result" aria-live="polite"></div>
+        </div>
+      </div>
+      <p class="note">This prototype demonstrates the intended decision-support workflow. It does not represent a validated ML model or real-time prediction system.</p>
+    </section>
+
+    <!-- REPORTS -->
+    <section class="panel" id="p-reports">
+      <div class="card">
+        <div class="card-head"><h3>Generated reports</h3><small>demo data · structured snapshots</small></div>
+        <div class="filters" id="report-filters" role="group" aria-label="Filter and generate reports">
+          <button type="button" class="fbtn on" data-rk="all">All</button>
+          <button type="button" class="fbtn" data-rk="summary">Risk summaries</button>
+          <button type="button" class="fbtn" data-rk="incident">Incident logs</button>
+          <button type="button" class="fbtn" data-rk="hotspot">Hotspot analyses</button>
+          <span class="filter-spacer"></span>
+          <label><span class="sr-only">Report period</span>
+            <select id="report-period" class="select">
+              <option value="1">Last 24 hours</option>
+              <option value="7">Last 7 days</option>
+              <option value="30">Last 30 days</option>
+            </select>
+          </label>
+          <label><span class="sr-only">Report type</span>
+            <select id="report-kind" class="select">
+              <option value="summary">Risk summary</option>
+              <option value="incident">Incident log</option>
+              <option value="hotspot">Hotspot analysis</option>
+            </select>
+          </label>
+          <button type="button" class="btn-ghost btn-sm" id="generate-report">＋ Generate report</button>
+        </div>
+        <div class="report-list" id="report-list"></div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="panel" id="p-settings">
+      <div class="card">
+        <div class="card-head"><h3>Alert preferences</h3><small>saved locally · dispatch simulated</small></div>
+        <div id="settings-list"></div>
+        <div class="danger-zone">
+          <div>
+            <div class="st">Reset demo data</div>
+            <div class="ss">Restores the original synthetic dataset and resets settings, filters, alert statuses, generated reports and assessment history.</div>
+          </div>
+          <button type="button" class="btn-danger" id="reset-demo">Reset demo data</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="credit">
+      <div class="credit-name">Machine Learning-based Early Warning &amp; Decision Support System for Human-Wildlife Conflict Management in India</div>
+      <div>Academic prototype for CHE110 · all data shown is synthetic · Created by <b>SM01010011</b></div>
+    </div>
+  </main>
+
+  <div class="backdrop" id="backdrop" aria-hidden="true"></div>
+</div>
+
+<!-- Report viewer modal -->
+<div class="modal" id="report-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+  <div class="modal-backdrop" data-close-modal></div>
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <h3 id="modal-title">Report</h3>
+        <div class="mh-sub" id="modal-sub"></div>
+      </div>
+      <button type="button" class="icon-btn" id="modal-close" data-close-modal aria-label="Close report">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-foot">
+      <button type="button" class="btn-ghost" id="modal-download">Download (.txt)</button>
+      <button type="button" class="btn-ghost" data-close-modal>Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Alert detail modal -->
+<div class="modal" id="alert-modal" role="dialog" aria-modal="true" aria-labelledby="alert-modal-title" hidden>
+  <div class="modal-backdrop" data-close-alert></div>
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <h3 id="alert-modal-title">Alert detail</h3>
+        <div class="mh-sub" id="alert-modal-sub"></div>
+      </div>
+      <button type="button" class="icon-btn" id="alert-modal-close" data-close-alert aria-label="Close alert details">✕</button>
+    </div>
+    <div class="modal-body" id="alert-modal-body"></div>
+    <div class="modal-foot" id="alert-actions"></div>
+  </div>
+</div>
+
+<!-- Animal info panel (inside the Live Map) -->
+<aside class="map-panel" id="map-panel" hidden aria-label="Animal details">
+  <header class="map-panel-head">
+    <div>
+      <h3 id="mp-title">Animal</h3>
+      <div class="mh-sub" id="mp-sub"></div>
+    </div>
+    <button type="button" class="icon-btn btn-xs" id="mp-close" aria-label="Close animal panel">✕</button>
+  </header>
+  <div class="map-panel-body" id="mp-body"></div>
+  <div class="map-panel-foot">
+    <button type="button" class="btn-ghost btn-sm" id="mp-alert" hidden>View alert</button>
+  </div>
+</aside>
+
+<!-- Confirmation dialog -->
+<div class="modal" id="confirm-modal" role="alertdialog" aria-modal="true" aria-labelledby="cf-title" hidden>
+  <div class="modal-backdrop" data-cf="cancel"></div>
+  <div class="modal-card modal-card-sm">
+    <div class="modal-head">
+      <h3 id="cf-title">Confirm</h3>
+      <button type="button" class="icon-btn btn-xs" data-cf="cancel" aria-label="Close dialog">✕</button>
+    </div>
+    <div class="modal-body"><p class="cf-msg" id="cf-msg"></p></div>
+    <div class="modal-foot">
+      <button type="button" class="btn-ghost" data-cf="cancel">Cancel</button>
+      <button type="button" class="btn-danger" id="cf-ok" data-cf="ok">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script src="script.js" defer></script>
+</body>
+</html>
