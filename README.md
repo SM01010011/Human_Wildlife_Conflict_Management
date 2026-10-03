@@ -11,14 +11,6 @@ An interactive dashboard prototype that demonstrates how a data-driven early-war
 
 ---
 
-## 🎬 Demo video
-
-![HWCM Monitor — scripted product tour](demo.mp4)
-
-A ~35 s scripted tour of every module: live map with simulated animal movement and risk filters, the alert workflow with its timeline, the transparent risk-assessment model, reports, and settings. If your viewer does not play it inline, the file is committed as [`demo.mp4`](demo.mp4).
-
----
-
 ## 📸 Screenshots
 
 ### Overview
