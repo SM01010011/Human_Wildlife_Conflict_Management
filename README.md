@@ -4,6 +4,7 @@
 
 > Academic prototype (CA1) · **CHE110 – Environmental Studies** · Lovely Professional University
 > ⚠️ **Demo / synthetic data only** — this is a front-end prototype, not an operational system.
+> Deploy: https://sm01010011.github.io/Human_Wildlife_Conflict_Management/
 
 ![HWCM Monitor banner](social-banner.png)
 
